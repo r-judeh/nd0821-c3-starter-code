@@ -30,6 +30,8 @@ jobs:
       with:
         role-to-assume: arn:aws:iam::123456789100:role/my-github-actions-role
         aws-region: us-east-1
+        aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+        aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
     - name: Setup dvc
       uses: iterative/setup-dvc@v1
     - name: Lint with flake8
