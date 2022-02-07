@@ -1,5 +1,5 @@
 [core]
-    remote = storage
     autostage = true
-['remote "storage"']
-    url = ../s3:arn:aws:s3:::raja-mlops-bucket
+    remote = s3remote
+['remote "s3remote"']
+    url = s3://raja-mlops-bucket
