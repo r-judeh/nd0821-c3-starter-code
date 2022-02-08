@@ -1,9 +1,16 @@
 import numpy as np
 from sklearn.preprocessing import LabelBinarizer, OneHotEncoder
+from sklearn.preprocessing import StandardScaler
 
 
 def process_data(
-    X, categorical_features=[], label=None, training=True, encoder=None, lb=None
+    X,
+    categorical_features=[],
+    label=None,
+    training=True,
+    scaler=None,
+    encoder=None,
+    lb=None,
 ):
     """ Process the data used in the machine learning pipeline.
 
@@ -29,6 +36,8 @@ def process_data(
         Trained sklearn OneHotEncoder, only used if training=False.
     lb : sklearn.preprocessing._label.LabelBinarizer
         Trained sklearn LabelBinarizer, only used if training=False.
+    scaleR: sklearn.preprocessing.StandardScaler
+        Trained sklearn StandardScaler, only used if training=False
 
     Returns
     -------
@@ -50,16 +59,21 @@ def process_data(
     else:
         y = np.array([])
 
-    X_categorical = X[categorical_features].values
     X_continuous = X.drop(*[categorical_features], axis=1)
+    X_categorical = X[categorical_features].values
 
     if training is True:
         encoder = OneHotEncoder(sparse=False, handle_unknown="ignore")
+        scaler = StandardScaler()
         lb = LabelBinarizer()
+
+        X_continuous = scaler.fit_transform(X_continuous)
         X_categorical = encoder.fit_transform(X_categorical)
         y = lb.fit_transform(y.values).ravel()
     else:
+        X_continuous = scaler.transform(X_continuous)
         X_categorical = encoder.transform(X_categorical)
+
         try:
             y = lb.transform(y.values).ravel()
         # Catch the case where y is None because we're doing inference.
@@ -67,4 +81,4 @@ def process_data(
             pass
 
     X = np.concatenate([X_continuous, X_categorical], axis=1)
-    return X, y, encoder, lb
+    return X, y, scaler, encoder, lb
