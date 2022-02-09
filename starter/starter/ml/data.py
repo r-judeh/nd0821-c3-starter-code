@@ -1,16 +1,29 @@
 import numpy as np
+import pandas as pd
+import os
+
 from sklearn.preprocessing import LabelBinarizer, OneHotEncoder
 from sklearn.preprocessing import StandardScaler
+from sklearn.compose import ColumnTransformer
+
+
+def load_data(root_path, file_name):
+    df = pd.read_csv(os.path.join(root_path, "data", file_name))
+
+    return df
+
+
+def save_data(df, root_path, file_name):
+    df.to_csv(os.path.join(root_path, "data", file_name))
 
 
 def process_data(
-    X,
-    categorical_features=[],
+    data,
+    categorical_features,
     label=None,
     training=True,
-    scaler=None,
-    encoder=None,
-    lb=None,
+    preprocessor=None,
+    label_binarizer=None,
 ):
     """ Process the data used in the machine learning pipeline.
 
@@ -32,12 +45,11 @@ def process_data(
         for y (default=None)
     training : bool
         Indicator if training mode or inference/validation mode.
-    encoder : sklearn.preprocessing._encoders.OneHotEncoder
-        Trained sklearn OneHotEncoder, only used if training=False.
+    preprocessor : sklearn.compose.ColumnTransformer
+        Trained sklearn preprocessor, only used if training=False.
     lb : sklearn.preprocessing._label.LabelBinarizer
         Trained sklearn LabelBinarizer, only used if training=False.
-    scaleR: sklearn.preprocessing.StandardScaler
-        Trained sklearn StandardScaler, only used if training=False
+
 
     Returns
     -------
@@ -45,8 +57,8 @@ def process_data(
         Processed data.
     y : np.array
         Processed labels if labeled=True, otherwise empty np.array.
-    encoder : sklearn.preprocessing._encoders.OneHotEncoder
-        Trained OneHotEncoder if training is True, otherwise returns the encoder passed
+    preprocessor : sklearn.compose.ColumnTransformer
+        Trained OneHotEncoder if training is True, otherwise returns the preprocessor passed
         in.
     lb : sklearn.preprocessing._label.LabelBinarizer
         Trained LabelBinarizer if training is True, otherwise returns the binarizer
@@ -54,31 +66,52 @@ def process_data(
     """
 
     if label is not None:
-        y = X[label]
-        X = X.drop([label], axis=1)
+        y = data[label]
+        X = data.drop([label], axis=1)
     else:
         y = np.array([])
+        X = data
 
-    X_continuous = X.drop(*[categorical_features], axis=1)
-    X_categorical = X[categorical_features].values
+    continuous_features = list(set(X.columns) - set(categorical_features))
 
     if training is True:
-        encoder = OneHotEncoder(sparse=False, handle_unknown="ignore")
-        scaler = StandardScaler()
-        lb = LabelBinarizer()
+        preprocessor = ColumnTransformer(
+            transformers=[
+                ("continuous_feats", StandardScaler(), continuous_features),
+                ("categorical_feats", OneHotEncoder(sparse=False, handle_unknown="ignore"), categorical_features),
+            ],
+            remainder="drop",  # This drops the columns that we do not transform
+        )
 
-        X_continuous = scaler.fit_transform(X_continuous)
-        X_categorical = encoder.fit_transform(X_categorical)
-        y = lb.fit_transform(y.values).ravel()
+        label_binarizer = LabelBinarizer()
+
+        X = preprocessor.fit_transform(X)
+        y = label_binarizer.fit_transform(y.values).ravel()
     else:
-        X_continuous = scaler.transform(X_continuous)
-        X_categorical = encoder.transform(X_categorical)
+        X = preprocessor.transform(X)
 
-        try:
-            y = lb.transform(y.values).ravel()
         # Catch the case where y is None because we're doing inference.
+        try:
+            y = label_binarizer.transform(y.values).ravel()
         except AttributeError:
             pass
 
-    X = np.concatenate([X_continuous, X_categorical], axis=1)
-    return X, y, scaler, encoder, lb
+    return X, y, preprocessor, label_binarizer
+
+
+if __name__ == "__main__":
+    root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../..")
+    df = load_data(root_path, "clean_census.csv")
+
+    cat_features = [
+        "workclass",
+        "education",
+        "marital-status",
+        "occupation",
+        "relationship",
+        "race",
+        "sex",
+        "native-country",
+    ]
+
+    X, y, preprocessor, label_binarizer = process_data(df, cat_features, 'salary')
