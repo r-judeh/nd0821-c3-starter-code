@@ -1,5 +1,14 @@
 from sklearn.linear_model import LogisticRegression
+from starter.ml.model import load_model, save_model
 from starter.ml.model import train_model, compute_model_metrics, inference
+
+
+def test_load_model(root_path):
+    model = load_model(root_path, "model.pkl")
+
+    assert isinstance(model, LogisticRegression)
+    assert model.max_iter == 300
+    assert model.n_features_in_ == 109
 
 
 def test_train_model(data):
