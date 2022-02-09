@@ -16,7 +16,6 @@ data = load_data(root_path, "clean_census.csv")
 with open(os.path.join(root_path, "starter", "constants.yaml"), 'r') as f:
     categorical_features = yaml.safe_load(f)["categorical_features"]
 
-
 # Split data
 train_data, test_data = train_test_split(data, test_size=0.20)
 
