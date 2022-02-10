@@ -5,7 +5,6 @@ import pandas as pd
 import numpy as np
 
 from sklearn.linear_model import LogisticRegression
-from starter.ml.data import load_data
 
 np.random.seed(42)
 
@@ -19,8 +18,8 @@ def root_path():
 
 @pytest.fixture(scope='session')
 def data():
-    df = pd.DataFrame(np.random.randint(0, 100, size=(100, 4), ), columns=list('ABCD'))
-    df['target'] = np.random.randint(0, 2, size=(100,))
+    df = pd.DataFrame(np.random.randint(0, 400, size=(200, 4), ), columns=['A', 'B', 'C', 'D'])
+    df['target'] = np.random.randint(0, 2, size=(200,))
 
     y = df['target']
     X = df.drop(['target'], axis=1)
