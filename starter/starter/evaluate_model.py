@@ -2,7 +2,7 @@ import os
 import yaml
 
 from ml.data import load_data, process_data
-from ml.model import load_model, inference, compute_model_metrics
+from ml.model import load_model, inference, compute_model_metrics, compute_slice_metrics
 
 
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
@@ -31,3 +31,15 @@ precision, recall, fbeta = compute_model_metrics(y_test, y_pred)
 
 # Print results
 print(f"precision={precision}, recall={recall}, fbeta={fbeta}")
+
+# Compute slice performances
+slice_groups = ['workclass']
+slice_performance = compute_slice_metrics(
+    test_data.loc[:, test_data.columns != 'salary'],
+    y_test,
+    y_pred,
+    slice_groups
+)
+
+# Print slice performance
+print(slice_performance)
