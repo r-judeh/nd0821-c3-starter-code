@@ -1,6 +1,9 @@
 from sklearn.linear_model import LogisticRegression
 from starter.ml.model import load_model, save_model
-from starter.ml.model import train_model, compute_model_metrics, inference
+from starter.ml.model import train_model, inference
+from starter.ml.model import compute_model_metrics, compute_slice_metrics
+
+import pandas as pd
 
 
 def test_load_model(root_path):
@@ -34,6 +37,19 @@ def test_compute_model_metrics(model, data):
 
     precision, recall, fbeta = compute_model_metrics(y, y_pred)
 
-    assert precision > 0.5
-    assert recall > 0.5
-    assert fbeta > 0.5
+    assert precision > 0.0
+    assert recall > 0.0
+    assert fbeta > 0.0
+
+
+def test_compute_slice_metrics(data):
+    X, y = data
+    slice_performance = compute_slice_metrics(
+        features=X,
+        labels=y,
+        predictions=y,
+        cat_features=['A']
+    )
+
+    assert isinstance(slice_performance, pd.DataFrame)
+    assert (slice_performance.columns == ['Precision', 'Recall', 'TNR', 'NPV']).all()
