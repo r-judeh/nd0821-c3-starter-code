@@ -1,8 +1,11 @@
-from sklearn.metrics import fbeta_score, precision_score, recall_score
-from sklearn.linear_model import LogisticRegression
-
 import pickle
 import os
+
+import pandas as pd
+import numpy as np
+
+from sklearn.metrics import fbeta_score, precision_score, recall_score
+from sklearn.linear_model import LogisticRegression
 
 
 def load_model(root_path, model_name):
@@ -82,3 +85,48 @@ def inference(model, X):
     return y_pred
 
 
+def compute_slice_metrics(features,
+                          labels,
+                          predictions,
+                          cat_features):
+
+    """
+    Computes the performance on categorical slices of the data
+    Inputs:
+        features: pandas DataFrame
+            Contains the features on which a machine learning model was trained on
+        labels: numpy array
+            Ground-truth labels of each sample in features
+        predictions: numpy array
+            Predictions of each sample in features achieved by the model
+        cat_features: list
+            Categorical features on which we want to analyze the model performance
+    Returns:
+        slice_performance: pandas DataFrame
+            Contains precision, recall, TNR, and NPV of the groups in cat_features
+
+    """
+
+    # Convert labels and predictions into pandas Series
+    labels = pd.Series(np.squeeze(labels))
+    predictions = pd.Series(np.squeeze(predictions))
+
+    # Construct the full dataframe containing labels and predictions
+    df = pd.concat([features, labels, predictions], axis=1)
+    df.columns = list(features.columns) + ['labels', 'predictions']
+
+    # Calculate TP, FP, TN, and FN
+    TP = df[df['labels'] == 1].groupby(cat_features)['predictions'].sum()
+    FP = df[df['labels'] == 1].groupby(cat_features)['predictions'].apply(lambda x: x.count() - x.sum())
+    TN = df[df['labels'] == 0].groupby(cat_features)['predictions'].apply(lambda x: x.count() - x.sum())
+    FN = df[df['labels'] == 0].groupby(cat_features)['predictions'].sum()
+
+    precision = (TP / (TP + FP))
+    recall = (TP / (TP + FN))
+    TNR = (TN / (TN + FP))  # True Negative Rate
+    NPV = (TN / (TN + FN))  # Negative Predictive Value
+
+    slice_performance = pd.concat([precision, recall, TNR, NPV], axis=1)
+    slice_performance.columns = ['Precision', 'Recall', 'TNR', 'NPV']
+
+    return slice_performance
