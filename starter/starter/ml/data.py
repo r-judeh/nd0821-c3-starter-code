@@ -14,7 +14,7 @@ def load_data(root_path, file_name):
 
 
 def save_data(df, root_path, file_name):
-    df.to_csv(os.path.join(root_path, "data", file_name))
+    df.to_csv(os.path.join(root_path, "data", file_name), index=False)
 
 
 def process_data(
