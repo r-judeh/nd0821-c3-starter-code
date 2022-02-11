@@ -1,4 +1,4 @@
 outs:
-- md5: fd1d438a60cd4381ef26bceba997297d
-  size: 835515
+- md5: bd765fb5ebd007c93ba817abe097917d
+  size: 762462
   path: test_census.csv
