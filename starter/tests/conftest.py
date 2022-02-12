@@ -6,6 +6,9 @@ import numpy as np
 
 from sklearn.linear_model import LogisticRegression
 
+from ..starter.ml.data import load_data
+
+
 np.random.seed(42)
 
 
@@ -25,6 +28,16 @@ def data():
     X = df.drop(['target'], axis=1)
 
     return X, y
+
+
+@pytest.fixture(scope='session')
+def train_data(root_path):
+    df = load_data(root_path, "train_census.csv")
+
+    zero_class = df[df['salary'] == '<=50K'].iloc[0].drop('salary')
+    one_class = df[df['salary'] == '>50K'].iloc[0].drop('salary')
+
+    return zero_class, one_class
 
 
 @pytest.fixture(scope='session')
