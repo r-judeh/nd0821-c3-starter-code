@@ -1,7 +1,8 @@
 from sklearn.linear_model import LogisticRegression
-from starter.ml.model import load_model, save_model
-from starter.ml.model import train_model, inference
-from starter.ml.model import compute_model_metrics, compute_slice_metrics
+
+from ..starter.ml.model import load_model
+from ..starter.ml.model import train_model, inference
+from ..starter.ml.model import compute_model_metrics, compute_slice_metrics
 
 import pandas as pd
 
@@ -11,7 +12,7 @@ def test_load_model(root_path):
 
     assert isinstance(model, LogisticRegression)
     assert model.max_iter == 300
-    assert model.n_features_in_ == 109
+    assert model.n_features_in_ == 108
 
 
 def test_train_model(data):
