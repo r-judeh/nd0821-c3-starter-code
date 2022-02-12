@@ -25,4 +25,3 @@ def test_post_model_inference_one_class(train_data):
     r = client.post("/model_inference", json=one_class.to_dict())
 
     assert r.json() == {'Prediction': ['>50K']}
-    
