@@ -1,8 +1,8 @@
 from sklearn.linear_model import LogisticRegression
 
-from ..starter.ml.model import load_model
-from ..starter.ml.model import train_model, inference
-from ..starter.ml.model import compute_model_metrics, compute_slice_metrics
+from starter.ml.model import load_model
+from starter.ml.model import train_model, inference
+from starter.ml.model import compute_model_metrics, compute_slice_metrics
 
 import pandas as pd
 

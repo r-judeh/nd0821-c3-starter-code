@@ -6,7 +6,7 @@ import numpy as np
 
 from sklearn.linear_model import LogisticRegression
 
-from ..starter.ml.data import load_data
+from starter.ml.data import load_data
 
 
 np.random.seed(42)

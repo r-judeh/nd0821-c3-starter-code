@@ -6,8 +6,8 @@ import yaml
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
-from .starter.ml.model import load_model, inference
-from .starter.ml.data import process_data
+from starter.ml.model import load_model, inference
+from starter.ml.data import process_data
 
 
 class CensusItem(BaseModel):
