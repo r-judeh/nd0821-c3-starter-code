@@ -6,8 +6,8 @@ import yaml
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 
-from starter.ml.model import load_model, inference
-from starter.ml.data import process_data
+from .starter.ml.model import load_model, inference
+from .starter.ml.data import process_data
 
 
 class CensusItem(BaseModel):
@@ -45,7 +45,7 @@ async def welcome_message():
     return {'Greeting': 'Welcome To Udacity Project by Raja Judeh'}
 
 
-@app.post("/inference")
+@app.post("/model_inference")
 async def model_inference(data: CensusItem):
     data_dic = data.dict(by_alias=True)
 
@@ -60,17 +60,16 @@ async def model_inference(data: CensusItem):
         preprocessor=preprocessor, label_binarizer=None
     )
 
-    print(type(data_processed))
-
     pred = list(inference(model, data_processed))
-    print(type(pred))
+    print('-------------', pred)
 
-    for val, idx in enumerate(pred):
+    for idx, val in enumerate(pred):
+        print(idx)
         if pred[idx] == 0:
-            pred[idx] = '<=50k'
+            pred[idx] = '<=50K'
         else:
-            pred[idx] = '>50k'
+            pred[idx] = '>50K'
 
-    return {'Data': data, 'Prediction': pred}
+    return {'Prediction': pred}
 
 
