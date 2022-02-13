@@ -11,7 +11,6 @@ from starter.ml.data import process_data
 
 
 if "DYNO" in os.environ and os.path.isdir(".dvc"):
-    print('--------.----------------.-------------.---------------.-------------')
     os.system("dvc config core.no_scm true")
     if os.system("dvc pull") != 0:
         exit("dvc pull failed")
@@ -50,7 +49,7 @@ app = FastAPI()
 
 @app.get("/")
 async def welcome_message():
-    return {'Greetings': 'Welcome To Udacity Project by Raja Judeh'}
+    return {'Greetings From Raja Judeh': 'Welcome To Udacity Project on Model Deployment'}
 
 
 @app.post("/model_inference")
