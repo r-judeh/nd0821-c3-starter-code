@@ -2,3 +2,5 @@ secret_keys.csv
 __pycache__*
 */__pycache__*
 */*/__pycache__*
+starter/.dvc/*
+starter/.dvc
