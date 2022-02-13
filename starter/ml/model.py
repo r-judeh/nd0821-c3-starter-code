@@ -125,8 +125,9 @@ def compute_slice_metrics(features,
     recall = (TP / (TP + FN))
     TNR = (TN / (TN + FP))  # True Negative Rate
     NPV = (TN / (TN + FN))  # Negative Predictive Value
+    f_score = 2*((precision * recall) / (precision + recall))
 
-    slice_performance = pd.concat([precision, recall, TNR, NPV], axis=1)
-    slice_performance.columns = ['Precision', 'Recall', 'TNR', 'NPV']
+    slice_performance = pd.concat([precision, recall, TNR, NPV, f_score], axis=1)
+    slice_performance.columns = ['Precision', 'Recall', 'TNR', 'NPV', 'F-Score']
 
     return slice_performance
