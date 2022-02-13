@@ -53,4 +53,4 @@ def test_compute_slice_metrics(data):
     )
 
     assert isinstance(slice_performance, pd.DataFrame)
-    assert (slice_performance.columns == ['Precision', 'Recall', 'TNR', 'NPV']).all()
+    assert (slice_performance.columns == ['Precision', 'Recall', 'TNR', 'NPV', 'F-Score']).all()
