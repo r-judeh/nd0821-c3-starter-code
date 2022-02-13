@@ -10,6 +10,14 @@ from starter.ml.model import load_model, inference
 from starter.ml.data import process_data
 
 
+if "DYNO" in os.environ and os.path.isdir(".dvc"):
+    print('--------.----------------.-------------.---------------.-------------')
+    os.system("dvc config core.no_scm true")
+    if os.system("dvc pull") != 0:
+        exit("dvc pull failed")
+    os.system("rm -r .dvc .apt/usr/lib/dvc")
+
+
 class CensusItem(BaseModel):
     age: Optional[Union[int, list]] = [39, 52]
     workclass: Optional[Union[str, list]] = ['State-gov', 'Self-emp-inc']
@@ -42,7 +50,7 @@ app = FastAPI()
 
 @app.get("/")
 async def welcome_message():
-    return {'Greeting': 'Welcome To Udacity Project by Raja Judeh'}
+    return {'Greetings': 'Welcome To Udacity Project by Raja Judeh'}
 
 
 @app.post("/model_inference")
@@ -71,5 +79,6 @@ async def model_inference(data: CensusItem):
             pred[idx] = '>50K'
 
     return {'Prediction': pred}
+
 
 
