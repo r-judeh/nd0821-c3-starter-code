@@ -68,10 +68,8 @@ async def model_inference(data: CensusItem):
     )
 
     pred = list(inference(model, data_processed))
-    print('-------------', pred)
 
     for idx, val in enumerate(pred):
-        print(idx)
         if pred[idx] == 0:
             pred[idx] = '<=50K'
         else:
