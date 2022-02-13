@@ -33,13 +33,18 @@ precision, recall, fbeta = compute_model_metrics(y_test, y_pred)
 print(f"precision={precision}, recall={recall}, fbeta={fbeta}")
 
 # Compute slice performances
-slice_groups = ['workclass']
-slice_performance = compute_slice_metrics(
-    test_data.loc[:, test_data.columns != 'salary'],
-    y_test,
-    y_pred,
-    slice_groups
-)
+with open('slice_output.txt', 'w') as f:
+    for cat_feature in categorical_features:
+        f.write(f"-------------------------------{cat_feature}-------------------------------\n")
+        slice_performance = compute_slice_metrics(
+            test_data.loc[:, test_data.columns != 'salary'],
+            y_test,
+            y_pred,
+            cat_feature
+        )
+        print(slice_performance)
+        f.write(slice_performance.to_string())
+        f.write(f"\n")
 
 # Print slice performance
 print(slice_performance)
