@@ -5,6 +5,24 @@ from ml.data import load_data, process_data
 from ml.model import load_model, inference, compute_model_metrics, compute_slice_metrics
 
 
+def get_categorical_slice_performance(test_data, y_test, y_pred, output_file):
+    categorical_features = test_data.select_dtypes(object).columns
+
+    with open(output_file, 'w') as f:
+        for cat_feature in categorical_features:
+            f.write(f"-------------------------------{cat_feature}-------------------------------\n")
+            slice_performance = compute_slice_metrics(
+                test_data,
+                y_test,
+                y_pred,
+                cat_feature
+            )
+            f.write(slice_performance.to_string())
+            f.write(f"\n")
+
+    return slice_performance
+
+
 root_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 
 # Load data and models
@@ -33,18 +51,13 @@ precision, recall, fbeta = compute_model_metrics(y_test, y_pred)
 print(f"precision={precision}, recall={recall}, fbeta={fbeta}")
 
 # Compute slice performances
-with open('slice_output.txt', 'w') as f:
-    for cat_feature in categorical_features:
-        f.write(f"-------------------------------{cat_feature}-------------------------------\n")
-        slice_performance = compute_slice_metrics(
-            test_data.loc[:, test_data.columns != 'salary'],
-            y_test,
-            y_pred,
-            cat_feature
-        )
-        print(slice_performance)
-        f.write(slice_performance.to_string())
-        f.write(f"\n")
+slice_performance = get_categorical_slice_performance(
+    test_data.loc[:, test_data.columns != 'salary'],
+    y_test,
+    y_pred,
+    'slice_output.txt'
+)
+
 
 # Print slice performance
 print(slice_performance)
