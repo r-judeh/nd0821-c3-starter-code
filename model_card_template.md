@@ -35,7 +35,9 @@ For slice performances two additional metrics were added:
 The slice performances are included in slice_output.txt
 
 ## Ethical Considerations
-No ethical consideration to be considered here to the best of my knowledge.
+This model was trained on Census data provided by UCI. This must kept in consideration 
+when working with the uploaded model. This project was done for educational uses 
+and meant to provide a proof of concept for deploying machine learning models.
 
 ## Caveats and Recommendations
 Alternative models could be tested to further improve the performance.
